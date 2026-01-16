@@ -56,3 +56,4 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /generated/prisma
+/config/finance-control-23375-firebase-adminsdk-fbsvc-37e05f2ba4.json

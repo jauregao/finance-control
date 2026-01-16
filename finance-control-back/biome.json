@@ -9,10 +9,23 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "style": {
+        "useImportType": "off"
+      },
       "recommended": true
     }
   },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "off"
+      }
+    }
+  },
   "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
     "formatter": {
       "quoteStyle": "single"
     }
@@ -20,6 +33,9 @@
   "files": {
     "maxSize": 524288,
     "ignoreUnknown": true,
-    "includes": ["src/**/*.*", "test/**/*.*"]
+    "includes": [
+      "src/**/*.*",
+      "test/**/*.*"
+    ]
   }
 }
