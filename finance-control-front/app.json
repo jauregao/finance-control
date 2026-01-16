@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "finance-control-bacl",
-    "slug": "finance-control-bacl",
+    "name": "finance-control",
+    "slug": "finance-control",
+    "owner": "jauregao",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "financecontrolbacl",
+    "scheme": "financecontrol",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -22,7 +23,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.jauregao.financecontrol"
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +36,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "49a17302-bf9b-42b8-9cfd-7a8aa217d1a1"
+      }
     }
   }
 }

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "275340808354",
+    "project_id": "finance-control-23375",
+    "storage_bucket": "finance-control-23375.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275340808354:android:b3d9fcf718b7bb53ea87fb",
+        "android_client_info": {
+          "package_name": "com.financecontrol.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "275340808354-77t9mq15m4cnqj25ec7qjqcmqil1npme.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.financecontrol.app",
+            "certificate_hash": "5cd4dac20003c255249a9dde10d0db5cef84c14f"
+          }
+        },
+        {
+          "client_id": "275340808354-f392d3bvadrp7tgumhvmia4hsv448lod.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm-QYBdpMfIFS_wgB70JGA-XStaSAk2-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "275340808354-f392d3bvadrp7tgumhvmia4hsv448lod.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
