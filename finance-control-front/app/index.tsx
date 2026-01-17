@@ -1,51 +1,28 @@
+import { Loading } from '@/components/ui/Loading';
 import { ThemedText as Text, ThemedView as View } from '@/components/ui/Themed';
+import { useAuth } from '@/src/hooks/useAuth';
+import { homeStyles } from '@/src/styles/home.screen.style';
 import { useRouter } from 'expo-router';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable } from 'react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { user, loading } = useAuth();
+
+  if (loading) return <Loading />;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Finance Control</Text>
-      <Text style={styles.subtitle}>Bem-vindo!</Text>
+    <View style={homeStyles.container}>
+      <Text style={homeStyles.title}>Finance Control</Text>
+      <Text style={homeStyles.subtitle}>Bem-vindo!</Text>
       
       <Pressable 
-        onPress={() => router.push('/dashboard')} 
-        style={styles.button}
+        onPress={() => router.push(user ? '/dashboard' : '/login')} 
+        style={homeStyles.button}
       >
-        <Text style={styles.buttonText}>Ir para Dashboard</Text>
+        <Text style={homeStyles.buttonText}>Ir para Dashboard</Text>
       </Pressable>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 30,
-  },
-  button: {
-    backgroundColor: '#4285F4',
-    padding: 15,
-    borderRadius: 8,
-    minWidth: 200,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
