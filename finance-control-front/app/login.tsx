@@ -1,89 +1,66 @@
-import { firebaseAuth, GoogleAuthProvider, signInWithCredential } from '@/src/lib/firebase';
+import { Loading } from '@/components/ui/Loading';
+import { useAuth } from '@/src/hooks/useAuth';
+import { handleGoogleSignIn } from '@/src/services/auth/googleAuth';
+import { loginStyles } from '@/src/styles/login.styles';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, Pressable } from 'react-native';
+import { ThemedText as Text, ThemedView as View } from '@/components/ui/Themed';
+
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
+  const { signIn } = useAuth();
   const [loading, setLoading] = useState(false);
   
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
   });
 
   useEffect(() => {
     if (response?.type === 'success') {
-      const { id_token } = response.params;
-      
-      const credential = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(firebaseAuth, credential)
-        .then((result) => {
-          console.log('Login success:', result.user);
-        })
-        .catch((error) => {
-          console.error('Login error:', error);
-          setLoading(false);
-        });
+      processGoogleLogin(response.params.id_token);
     } else if (response?.type === 'error' || response?.type === 'cancel') {
       setLoading(false);
     }
   }, [response]);
 
-  const handleGoogleLogin = async () => {
+  const processGoogleLogin = async (googleIdToken: string) => {
     setLoading(true);
+
     try {
-      await promptAsync();
-    } catch (error) {
-      console.error('Prompt error:', error);
+      const { accessToken, user } = await handleGoogleSignIn(googleIdToken);
+      await signIn(accessToken, user);
+    } catch (error: any) {
+      Alert.alert(
+        'Erro no Login',
+        error.response?.data?.message || 'Falha ao realizar login. Tente novamente.'
+      );
+    } finally {
       setLoading(false);
     }
   };
 
+  if (loading) return <Loading />
+
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Finance Control</Text>
+    <View style={loginStyles.container}>
+      <Text style={loginStyles.title}>Finance Control</Text>
       
-      {loading ? (
-        <ActivityIndicator size="large" color="#4285F4" />
-      ) : (
-        <Pressable
-          onPress={handleGoogleLogin}
-          style={styles.button}
-          disabled={!request}
-        >
-          <Text style={styles.buttonText}>Sign in with Google</Text>
-        </Pressable>
-      )}
+      <Pressable
+        onPress={() => {
+          setLoading(true);
+          promptAsync();
+        }}
+        style={loginStyles.button}
+        disabled={!request}
+      >
+        <Text style={loginStyles.buttonText}>Sign in with Google</Text>
+      </Pressable>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#000',
-  },
-  button: {
-    backgroundColor: '#4285F4',
-    padding: 15,
-    borderRadius: 8,
-    minWidth: 200,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
