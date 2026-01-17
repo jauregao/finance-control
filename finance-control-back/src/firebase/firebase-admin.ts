@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 
 @Injectable()
 export class FirebaseAdmin implements OnModuleInit {

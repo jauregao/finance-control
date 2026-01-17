@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 export class FirebaseAdminService implements OnModuleInit {
   private app: admin.app.App;
 
-  onModuleInit() {
+  async onModuleInit() {
     if (!this.app) {
       const path = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH;
       const serviceAccount = JSON.parse(readFileSync(path, 'utf8'));
