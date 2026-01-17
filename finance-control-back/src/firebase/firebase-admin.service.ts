@@ -9,6 +9,10 @@ export class FirebaseAdminService implements OnModuleInit {
   async onModuleInit() {
     if (!this.app) {
       const path = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH;
+      if (!path) {
+        throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY_PATH is not defined');
+      }
+
       const serviceAccount = JSON.parse(readFileSync(path, 'utf8'));
 
       this.app = admin.initializeApp({

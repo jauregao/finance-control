@@ -24,14 +24,16 @@ export class AuthService {
     const { uid, email, name } = decoded;
 
     let user = await this.prisma.user.findFirst({
-      where: { email: email ?? undefined },
+      where: { email: email },
     });
 
     if (!user) {
       user = await this.prisma.user.create({
         data: {
-          email: email ?? `${uid}@no-email.firebase`,
-          name: name ?? '',
+          email: email,
+          name: name,
+          provider: 'firebase',
+          providerAccountId: uid,
         },
       });
     }
