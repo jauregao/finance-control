@@ -1,6 +1,8 @@
+import { separatorStyles } from '@/src/styles/separator.style';
 import { useThemeColors } from '@/src/themes/useThemeColors';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ThemedView as View } from '@/components/ui/Themed';
+
 
 export function Separator() {
   const theme = useThemeColors();
@@ -8,16 +10,9 @@ export function Separator() {
   return (
     <View
       style={[
-        styles.separator,
+        separatorStyles.separator,
         { backgroundColor: theme.colors.separator },
       ]}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  separator: {
-    height: 1,
-    width: '100%',
-  },
-});

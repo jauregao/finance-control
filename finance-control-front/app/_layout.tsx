@@ -1,4 +1,5 @@
-import { RouteGuard } from '@/components/RouteGuard';
+import { Loading } from '@/components/ui/Loading';
+import { useAuth } from '@/src/hooks/useAuth';
 import { useThemeColors } from '@/src/themes/useThemeColors';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
@@ -43,19 +44,32 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const theme = useThemeColors();
+  const { user, loading } = useAuth();
+
+  if (loading) return <Loading />
 
   return (
-    <RouteGuard>
-      <ThemeProvider
-        value={theme.mode === 'dark' ? DarkTheme : DefaultTheme}
-      >
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        </Stack>
-      </ThemeProvider>
-    </RouteGuard>
+    <ThemeProvider value={theme.mode === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack screenOptions={{ headerShown: false}}>
+
+        <Stack.Protected guard={!user}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="login" />
+        </Stack.Protected>
+
+        <Stack.Protected guard={!!user}>
+          <Stack.Screen name="(tabs)" />
+           <Stack.Screen 
+            name="modal" 
+            options={{ 
+              presentation: 'modal',
+              headerShown: true,
+              title: 'Informações'
+            }} 
+          />
+        </Stack.Protected>
+
+      </Stack>
+    </ThemeProvider>
   );
 }
