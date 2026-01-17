@@ -1,5 +1,5 @@
-import type { INestApplication } from '@nestjs/common';
-import { Test, type TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
@@ -15,10 +15,15 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  it('/auth/firebase (POST) - deve retornar erro formatado', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/firebase')
+      .send({ invalid: 'data' })
+      .expect(401);
+
+    expect(response.body).toEqual({
+      status: 'error',
+      message: expect.stringContaining('Invalid Firebase token'),
+    });
   });
 });
