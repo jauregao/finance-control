@@ -13,41 +13,32 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  name          String
-  email         String    @unique
-  password      String?
-  emailVerified DateTime?
+  id    String @id @default(uuid())
+  name  String
+  email String @unique
 
-  accounts     Account[]
+  provider          String
+  providerAccountId String
+
   transactions Transaction[]
   savingsGoals SavingsGoal[]
 
   createdAt DateTime @default(now())
 
-  @@map("users")
-}
-
-model Account {
-  id                String @id @default(uuid())
-  provider          String
-  providerAccountId String
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
   @@unique([provider, providerAccountId])
-  @@map("accounts")
+  @@map("users")
 }
 
 model Transaction {
   id          String          @id @default(uuid())
   amount      Decimal
   type        TransactionType
-  categoryId  String
   description String
   dueDate     DateTime
   paymentDate DateTime?
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
@@ -58,8 +49,9 @@ model Transaction {
 }
 
 model Category {
-  id   String @id @default(uuid())
-  name String
+  id           String        @id @default(uuid())
+  name         String
+  transactions Transaction[]
 
   @@map("categories")
 }
