@@ -1,2 +1,0 @@
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/finance?schema=public
-FIREBASE_SERVICE_ACCOUNT_KEY_PATH=
