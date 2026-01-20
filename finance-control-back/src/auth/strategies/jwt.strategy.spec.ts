@@ -1,10 +1,11 @@
+import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
 
   beforeEach(() => {
-    strategy = new JwtStrategy();
+    strategy = new JwtStrategy(new ConfigService());
   });
 
   it('should be defined', () => {

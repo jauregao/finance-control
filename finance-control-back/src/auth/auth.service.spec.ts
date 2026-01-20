@@ -91,6 +91,7 @@ describe('AuthService', () => {
       expect(firebaseAdmin.auth.verifyIdToken).toHaveBeenCalledWith(validIdToken);
       expect(prismaService.user.findFirst).toHaveBeenCalledWith({
         where: { email: mockDecodedToken.email },
+        select: { id: true, email: true },
       });
       expect(prismaService.user.create).not.toHaveBeenCalled();
       expect(jwtService.signAsync).toHaveBeenCalledWith({
@@ -115,6 +116,7 @@ describe('AuthService', () => {
       expect(firebaseAdmin.auth.verifyIdToken).toHaveBeenCalledWith(validIdToken);
       expect(prismaService.user.findFirst).toHaveBeenCalledWith({
         where: { email: mockDecodedToken.email },
+        select: { id: true, email: true },
       });
       expect(prismaService.user.create).toHaveBeenCalledWith({
         data: {
@@ -123,6 +125,7 @@ describe('AuthService', () => {
           provider: 'firebase',
           providerAccountId: mockDecodedToken.uid,
         },
+        select: { id: true, email: true },
       });
       expect(jwtService.signAsync).toHaveBeenCalledWith({
         sub: mockUser.id,
@@ -212,6 +215,7 @@ describe('AuthService', () => {
           provider: 'firebase',
           providerAccountId: tokenWithoutName.uid,
         },
+        select: { id: true, email: true },
       });
     });
   });
