@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
 import { FirebaseAdminService } from '../firebase/firebase-admin.service';
-import type { FirebaseDecodedToken } from './types/firebase-decoded-token.type';
+import { PrismaService } from '../prisma/prisma.service';
+import type { AuthUserData, FirebaseDecodedToken, LoginResponse } from './types';
 
 @Injectable()
 export class AuthService {
@@ -12,39 +12,49 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async loginWithFirebase(idToken: string) {
-    let decoded: FirebaseDecodedToken | null = null;
-
-    try {
-      decoded = await this.firebaseAdmin.auth.verifyIdToken(idToken);
-    } catch {
-      throw new UnauthorizedException('Invalid Firebase token');
-    }
-
-    const { uid, email, name } = decoded;
-
-    let user = await this.prisma.user.findFirst({
-      where: { email: email },
-    });
-
-    if (!user) {
-      user = await this.prisma.user.create({
-        data: {
-          email: email,
-          name: name,
-          provider: 'firebase',
-          providerAccountId: uid,
-        },
-      });
-    }
-
-    const payload = { sub: user.id, email: user.email };
-    const accessToken = await this.jwtService.signAsync(payload);
+  async loginWithFirebase(idToken: string): Promise<LoginResponse> {
+    const decoded = await this.verifyFirebaseToken(idToken);
+    const user = await this.findOrCreateUser(decoded);
+    const accessToken = await this.generateAccessToken(user);
 
     return {
       userId: user.id,
       email: user.email,
       accessToken,
     };
+  }
+
+  private async verifyFirebaseToken(idToken: string): Promise<FirebaseDecodedToken> {
+    try {
+      return await this.firebaseAdmin.auth.verifyIdToken(idToken);
+    } catch {
+      throw new UnauthorizedException('Invalid Firebase token');
+    }
+  }
+
+  private async findOrCreateUser(decoded: FirebaseDecodedToken): Promise<AuthUserData> {
+    const existingUser = await this.prisma.user.findFirst({
+      where: { email: decoded.email },
+      select: { id: true, email: true },
+    });
+
+    if (existingUser) {
+      return existingUser;
+    }
+
+    return this.prisma.user.create({
+      data: {
+        email: decoded.email,
+        name: decoded.name,
+        provider: 'firebase',
+        providerAccountId: decoded.uid,
+      },
+      select: { id: true, email: true },
+    });
+  }
+
+  private async generateAccessToken(user: AuthUserData): Promise<string> {
+    const payload = { sub: user.id, email: user.email };
+    return this.jwtService.signAsync(payload);
   }
 }
