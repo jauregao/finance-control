@@ -22,9 +22,9 @@ export function validateEnv() {
       })
       .join('\n');
 
-    console.error('❌ Environment validation failed:');
+    console.error('Environment validation failed:');
     console.error(errors);
-    console.error('\n💡 Make sure you have a .env file with all required variables.');
+    console.error('\nMake sure you have a .env file with all required variables.');
     console.error('   Check env-example for reference.\n');
 
     throw new Error(`Environment validation failed:\n${errors}`);

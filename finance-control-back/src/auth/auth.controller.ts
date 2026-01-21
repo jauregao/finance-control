@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { FirebaseLoginDto } from './dto/firebase-login.dto';
 import { Public } from 'src/decorators/public.decorator';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
-import { AuthUser } from './types/auth-user.type';
+import { AuthUser } from '../types/auth-user.type';
 
 @ApiTags('Auth')
 @Controller('auth')

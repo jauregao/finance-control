@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { FirebaseAdminService } from '../firebase/firebase-admin.service';
 import { PrismaService } from '../prisma/prisma.service';
-import type { AuthUserData, FirebaseDecodedToken, LoginResponse } from './types';
+import type { AuthUserData, FirebaseDecodedToken, LoginResponse } from '../types';
 
 @Injectable()
 export class AuthService {
