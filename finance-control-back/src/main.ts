@@ -16,7 +16,12 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
 
-  app.use(helmet());
+  app.use(helmet({
+    contentSecurityPolicy: false,
+  }));
+
+
+  app.enableCors(corsConfig(env));
 
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(
@@ -31,8 +36,6 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors(corsConfig);
-
   if (env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('Finance Control API')
@@ -45,15 +48,15 @@ async function bootstrap() {
     SwaggerModule.setup('docs', app, document);
   }
 
-  const port = env.PORT;
-  await app.listen(port);
+  await app.listen(env.PORT);
 
   const logger = new Logger('Bootstrap');
-  logger.log(`Application running on port ${port}`);
+  logger.log(`Application running on port ${env.PORT}`);
   logger.log(`Environment: ${env.NODE_ENV}`);
+  logger.log(`❤️ http://localhost:${env.PORT}/health`);
 
   if (env.NODE_ENV !== 'production') {
-    logger.log(`Swagger docs available at http://localhost:${port}/docs`);
+    logger.log(`Swagger docs available at http://localhost:${env.PORT}/docs`);
   }
 }
 
