@@ -1,6 +1,7 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { readFileSync } from 'node:fs';
+import * as path from 'node:path';
 
 @Injectable()
 export class FirebaseAdminService implements OnModuleInit {
@@ -8,12 +9,15 @@ export class FirebaseAdminService implements OnModuleInit {
 
   async onModuleInit() {
     if (!this.app) {
-      const path = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH;
-      if (!path) {
+      const envPath = process.env.FIREBASE_SERVICE_ACCOUNT_KEY_PATH;
+
+      if (!envPath) {
         throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY_PATH is not defined');
       }
 
-      const serviceAccount = JSON.parse(readFileSync(path, 'utf8'));
+      const filePath = path.join(process.cwd(), envPath);
+
+      const serviceAccount = JSON.parse(readFileSync(filePath, 'utf8'));
 
       this.app = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
