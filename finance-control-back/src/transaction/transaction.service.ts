@@ -1,36 +1,91 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { TransactionType } from '@prisma/client';
+import { OrderDirection, TransactionOrderField } from '../types';
 
 @Injectable()
 export class TransactionService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createTransactionDto: CreateTransactionDto, userId: string) {
-      await this.prisma.transaction.create({
+    await this.prisma.transaction.create({
       data: {
         ...createTransactionDto,
         userId,
       },
     });
 
-    return 'This action adds a new transaction';
+    return true;
   }
 
-  findAll() {
-    return `This action returns all transaction`;
+  async findAll(
+    userId: string,
+    categoryId?: string,
+    type?: TransactionType,
+    field: TransactionOrderField = TransactionOrderField.DUEDATE,
+    order: OrderDirection = OrderDirection.ASC,
+  ) {
+    return this.prisma.transaction.findMany({
+      where: {
+        userId,
+        categoryId,
+        type,
+      },
+      orderBy: {
+        [field]: order,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} transaction`;
+  async findOne(id: string, userId: string) {
+    const transaction = await this.prisma.transaction.findFirst({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!transaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+
+    return transaction;
   }
 
-  update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    return `This action updates a #${id} transaction`;
+  async update(
+    id: string,
+    userId: string,
+    updateTransactionDto: UpdateTransactionDto,
+  ) {
+    const result = await this.prisma.transaction.updateMany({
+      where: {
+        id,
+        userId,
+      },
+      data: updateTransactionDto,
+    });
+
+    if (result.count === 0) {
+      throw new NotFoundException('Transaction not found or not authorized');
+    }
+
+    return this.findOne(id, userId);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} transaction`;
+  async remove(id: string, userId: string) {
+    const result = await this.prisma.transaction.deleteMany({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (result.count === 0) {
+      throw new NotFoundException('Transaction not found or not authorized');
+    }
+
+    return { deleted: true };
   }
 }
