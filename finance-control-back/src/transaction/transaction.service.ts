@@ -7,17 +7,16 @@ import { OrderDirection, TransactionOrderField } from '../types';
 
 @Injectable()
 export class TransactionService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createTransactionDto: CreateTransactionDto, userId: string) {
-    await this.prisma.transaction.create({
+    return this.prisma.transaction.create({
       data: {
         ...createTransactionDto,
         userId,
       },
+      include: { category: true },
     });
-
-    return true;
   }
 
   async findAll(
@@ -28,15 +27,22 @@ export class TransactionService {
     order: OrderDirection = OrderDirection.ASC,
   ) {
     return this.prisma.transaction.findMany({
-      where: {
-        userId,
-        categoryId,
-        type,
-      },
-      orderBy: {
-        [field]: order,
-      },
+      where: this.buildWhereClauseFilter(userId, categoryId, type),
+      orderBy: { [field]: order },
+      include: { category: true },
     });
+  }
+
+  private buildWhereClauseFilter(
+    userId: string,
+    categoryId?: string,
+    type?: TransactionType,
+  ) {
+    return {
+      userId,
+      ...(categoryId && { categoryId }),
+      ...(type && { type }),
+    };
   }
 
   async findOne(id: string, userId: string) {
