@@ -20,7 +20,6 @@ async function bootstrap() {
     contentSecurityPolicy: false,
   }));
 
-
   app.enableCors(corsConfig(env));
 
   app.useGlobalFilters(new AllExceptionsFilter());

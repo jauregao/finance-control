@@ -25,7 +25,7 @@ export function validateEnv() {
     console.error('Environment validation failed:');
     console.error(errors);
     console.error('\nMake sure you have a .env file with all required variables.');
-    console.error('   Check env-example for reference.\n');
+    console.error('Check env-example for reference.\n');
 
     throw new Error(`Environment validation failed:\n${errors}`);
   }
